@@ -17,6 +17,7 @@ namespace csvtester
         public Form1()
         {
             InitializeComponent();
+            richTextBox2.Hide();
         }
 
         private void SaveFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -57,39 +58,121 @@ namespace csvtester
                     //}
                     using (var dr = new CsvDataReader(csv))
                     {
-                        dt.Columns.Add("Item number",typeof(string));
+                        
                         dt.Load(dr);
                         dataGridView1.DataSource = dt;
                     }
-                    richTextBox1.Lines = line;
+                    
                 }
             }
         }
 
         private void Button3_Click(object sender, EventArgs e)
         {
-            var failed = richTextBox1.Lines;
-            var temp = "";
-            newdata = new string[failed.Length];
-            for (int i = 0; i < failed.Length; i++)
+            
+            String[] values = File.ReadAllText(textBox1.Text).Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            Dictionary<string, string> d = new Dictionary<string, string>();
+            StringBuilder csvcontent = new StringBuilder();
+            var header = values[0];
+            csvcontent.AppendLine(header);
+            //csvcontent.Append(new[] { Environment.NewLine });
+            foreach (var item in values)
             {
-                temp = failed[i].Replace(
-                    "SKU ",
-                    "");
-                newdata[i] = temp;
+                var b = item.Split(',');
+                var count = b.Count();
+                string datalist = "";
+                for (int i = 1; i < count; i++)
+                {
+                    datalist += b[i] + ",";
+                }
+                d.Add(b[0], datalist);
             }
-            //richTextBox1.Text = dataGridView1.Rows.GetFirstRow();
-            //foreach (var item in )
-            //{
-            //    richTextBox1.Text = item.ToString();
-            //}
-            //foreach (var item in newdata)
-            //{
-            //    if (item == dataGridView1.Columns.)
-            //    {
+            int c = 0;
+            foreach (var item in d)
+            {
+                //String[] failed = File.ReadAllText(@"C:\Users\User-PC\source\repos\csvtester\csvtester\bin\Debug\csvtest.csv").Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
-            //    }
-            //}
+                var failed = richTextBox1.Lines;
+                var temp = "";
+                //var temp2 = "";
+                newdata = new string[failed.Length];
+                for (int i = 0; i < failed.Length; i++)
+                {
+                    temp = failed[i].Replace(
+                        "SKU ",
+                        "");
+                    
+                    if (temp.Contains(',') )
+                    {
+                       var temp2 =  temp.Split(',');
+                        newdata[i] = temp2[0];
+                        
+                    }
+                    else if (temp.Contains(' '))
+                    {
+                        var temp2 = temp.Split(' ');
+                        newdata[i] = temp2[0];
+                    }
+                    else
+                    {
+                        newdata[i] = temp;
+                    }
+                }
+                //richTextBox2.Show();
+                //richTextBox2.Lines = newdata;
+                for (int i = 0; i < newdata.Count(); i++)
+                {
+                    //Console.WriteLine(newfailed[i]);
+                    if (item.Key == newdata[i])
+                    {
+                        csvcontent.AppendLine(item.ToString());
+                        //csvcontent.Append(new[] { Environment.NewLine });
+                        //Console.WriteLine(item);
+                        c++;
+
+                    }
+                }
+               
+            }
+            try
+            {
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.InitialDirectory = @"C:\";
+                saveFileDialog1.Title = "Save csv Files";
+                saveFileDialog1.CheckFileExists = false;
+                saveFileDialog1.CheckPathExists = true;
+                saveFileDialog1.DefaultExt = "csv";
+                saveFileDialog1.Filter = "csv files (*.csv)|*.csv";
+                saveFileDialog1.FilterIndex = 2;
+                saveFileDialog1.RestoreDirectory = true;
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    textBox2.Text = saveFileDialog1.FileName;
+                }
+
+                File.AppendAllText(textBox2.Text, csvcontent.ToString());
+                string message = "file was gesave na "+ textBox2.Text;
+                string title = "Success";
+                MessageBoxButtons buttons = MessageBoxButtons.AbortRetryIgnore;
+                DialogResult result = MessageBox.Show(message, title, buttons, MessageBoxIcon.Warning);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                string message = "ek kan nie hier save nie try op n ander plek save";
+                string title = "Unauthorized Access To File Path";
+                MessageBoxButtons buttons = MessageBoxButtons.AbortRetryIgnore;
+                DialogResult result = MessageBox.Show(message, title, buttons, MessageBoxIcon.Warning);
+                
+            }
+            catch (ArgumentException)
+            {
+                string message = "niks was select nie";
+                string title = "Path was not specified";
+                MessageBoxButtons buttons = MessageBoxButtons.OKCancel;
+                DialogResult result = MessageBox.Show(message, title, buttons, MessageBoxIcon.Warning);
+                
+            }
+            
         }
     }
 }

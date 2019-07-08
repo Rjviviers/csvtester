@@ -39,6 +39,8 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button3 = new System.Windows.Forms.Button();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -92,10 +94,11 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(60, 36);
+            this.textBox1.Location = new System.Drawing.Point(924, 665);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(162, 20);
             this.textBox1.TabIndex = 6;
+            this.textBox1.Visible = false;
             // 
             // openFileDialog1
             // 
@@ -111,11 +114,29 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.Button3_Click);
             // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(986, 639);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(100, 20);
+            this.textBox2.TabIndex = 8;
+            this.textBox2.Visible = false;
+            // 
+            // richTextBox2
+            // 
+            this.richTextBox2.Location = new System.Drawing.Point(428, 41);
+            this.richTextBox2.Name = "richTextBox2";
+            this.richTextBox2.Size = new System.Drawing.Size(321, 643);
+            this.richTextBox2.TabIndex = 9;
+            this.richTextBox2.Text = "";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1113, 755);
+            this.Controls.Add(this.richTextBox2);
+            this.Controls.Add(this.textBox2);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button2);
@@ -144,6 +165,8 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.RichTextBox richTextBox2;
     }
 }
 
