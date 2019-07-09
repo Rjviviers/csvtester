@@ -68,25 +68,33 @@ namespace csvtester
 
         private void Button3_Click(object sender, EventArgs e)
         {
-            
+            Random r = new Random();
             String[] values = File.ReadAllText(textBox1.Text).Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            Dictionary<string, string> d = new Dictionary<string, string>();
+            Dictionary<string, string> dListCsvData = new Dictionary<string, string>();
             StringBuilder csvcontent = new StringBuilder();
             var header = values[0];
             csvcontent.AppendLine(header);
             //csvcontent.Append(new[] { Environment.NewLine });
             foreach (var item in values)
             {
-                var b = item.Split(',');
-                var count = b.Count();
-                string datalist = "";
+                var csvIdentifier = item.Split(',');
+                var count = csvIdentifier.Count();
+                string csvContext = "";
                 for (int i = 1; i < count; i++)
                 {
-                    datalist += b[i] + ",";
+                    csvContext += csvIdentifier[i] + ",";
                 }
                 try
                 {
-                    d.Add(b[0], datalist);
+                    if (csvIdentifier[0] != "" || csvIdentifier[0] == null)
+                    {
+                        dListCsvData.Add(csvIdentifier[0], csvContext);
+                    }
+                    else
+                    {
+                        dListCsvData.Add("ignore" + r.Next(1, 9999).ToString(),csvContext);
+                    }
+
                 }
                 catch (ArgumentException exc)
                 {
@@ -94,10 +102,10 @@ namespace csvtester
                     MessageBoxButtons buttons = MessageBoxButtons.AbortRetryIgnore;
                     DialogResult result = MessageBox.Show(exc.ToString(), title, buttons, MessageBoxIcon.Warning);
                 }
-                
+
             }
             int c = 0;
-            foreach (var item in d)
+            foreach (var item in dListCsvData)
             {
                 //String[] failed = File.ReadAllText(@"C:\Users\User-PC\source\repos\csvtester\csvtester\bin\Debug\csvtest.csv").Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
@@ -106,7 +114,8 @@ namespace csvtester
                 //var temp2 = "";
                 newdata = new string[failed.Length];
                 for (int i = 0; i < failed.Length; i++)
-                {
+                {//add if statment with .contains skus
+
                     temp = failed[i].Replace(
                         "SKU ",
                         "");
