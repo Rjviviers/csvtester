@@ -17,7 +17,7 @@ namespace csvtester
         public Form1()
         {
             InitializeComponent();
-            richTextBox2.Hide();
+            //richTextBox2.Hide();
         }
 
         private void SaveFileDialog1_FileOk(object sender, CancelEventArgs e)
@@ -58,7 +58,6 @@ namespace csvtester
                     //}
                     using (var dr = new CsvDataReader(csv))
                     {
-                        
                         dt.Load(dr);
                         dataGridView1.DataSource = dt;
                     }
@@ -85,7 +84,17 @@ namespace csvtester
                 {
                     datalist += b[i] + ",";
                 }
-                d.Add(b[0], datalist);
+                try
+                {
+                    d.Add(b[0], datalist);
+                }
+                catch (ArgumentException exc)
+                {
+                    var title = "failed";
+                    MessageBoxButtons buttons = MessageBoxButtons.AbortRetryIgnore;
+                    DialogResult result = MessageBox.Show(exc.ToString(), title, buttons, MessageBoxIcon.Warning);
+                }
+                
             }
             int c = 0;
             foreach (var item in d)
@@ -125,7 +134,7 @@ namespace csvtester
                     //Console.WriteLine(newfailed[i]);
                     if (item.Key == newdata[i])
                     {
-                        csvcontent.AppendLine(item.ToString());
+                        csvcontent.AppendLine(item.ToString().Trim(']', '['));
                         //csvcontent.Append(new[] { Environment.NewLine });
                         //Console.WriteLine(item);
                         c++;
@@ -136,24 +145,28 @@ namespace csvtester
             }
             try
             {
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-                saveFileDialog1.InitialDirectory = @"C:\";
-                saveFileDialog1.Title = "Save csv Files";
-                saveFileDialog1.CheckFileExists = false;
-                saveFileDialog1.CheckPathExists = true;
-                saveFileDialog1.DefaultExt = "csv";
-                saveFileDialog1.Filter = "csv files (*.csv)|*.csv";
-                saveFileDialog1.FilterIndex = 2;
-                saveFileDialog1.RestoreDirectory = true;
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                using (SaveFileDialog saveFileDialog1 = new SaveFileDialog
                 {
-                    textBox2.Text = saveFileDialog1.FileName;
+                    InitialDirectory = @"C:\",
+                    Title = "Save csv Files",
+                    CheckFileExists = false,
+                    CheckPathExists = true,
+                    DefaultExt = "csv",
+                    Filter = "csv files (*.csv)|*.csv",
+                    FilterIndex = 2,
+                    RestoreDirectory = true
+                })
+                {
+                    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                    {
+                        textBox2.Text = saveFileDialog1.FileName;
+                    }
                 }
 
                 File.AppendAllText(textBox2.Text, csvcontent.ToString());
-                string message = "file was gesave na "+ textBox2.Text;
+                string message = "file was gesave na " + textBox2.Text;
                 string title = "Success";
-                MessageBoxButtons buttons = MessageBoxButtons.AbortRetryIgnore;
+                MessageBoxButtons buttons = MessageBoxButtons.OK;
                 DialogResult result = MessageBox.Show(message, title, buttons, MessageBoxIcon.Warning);
             }
             catch (UnauthorizedAccessException)
