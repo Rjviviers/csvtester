@@ -31,7 +31,7 @@ namespace csvtester
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog
             {
-                InitialDirectory = @"D:\",
+                InitialDirectory = @"C:\",
                 Title = "Browse csv Files",
                 CheckFileExists = true,
                 CheckPathExists = true,
