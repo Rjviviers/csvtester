@@ -3,11 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace csvtester
@@ -26,7 +24,7 @@ namespace csvtester
         }
         public DataTable dt = new DataTable();
         public string[] newdata = null;
-        public string[] line = null; 
+        public string[] line = null;
         private void Button2_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog
@@ -51,17 +49,11 @@ namespace csvtester
                 using (StreamReader reader = new StreamReader(filePathCsv))
                 using (CsvReader csv = new CsvReader(reader))
                 {
-                    
-                    //while (csv.Read())
-                    //{
-                    //    line.Append(csv.GetField("Item number"));
-                    //}
                     using (var dr = new CsvDataReader(csv))
                     {
                         dt.Load(dr);
                         dataGridView1.DataSource = dt;
                     }
-                    
                 }
             }
         }
@@ -86,32 +78,38 @@ namespace csvtester
                 }
                 try
                 {
-                    if (csvIdentifier[0] != "" || csvIdentifier[0] == null)
+                    if (csvIdentifier[0] != "")
+                {
+                    if (csvIdentifier[0] != null)
                     {
-                        dListCsvData.Add(csvIdentifier[0], csvContext);
+                        if (dListCsvData.ContainsKey(csvIdentifier[0]) == false)
+                        {
+                            dListCsvData.Add(csvIdentifier[0], csvContext);
+                        }
                     }
-                    else
-                    {
-                        dListCsvData.Add("ignore" + r.Next(1, 9999).ToString(),csvContext);
-                    }
+                }
+                else
+                {
+                    dListCsvData.Add("ignore" + r.Next(1, 99999999).ToString(), csvContext);
+                }
 
                 }
                 catch (ArgumentException exc)
                 {
-                    var title = "failed";
-                    MessageBoxButtons buttons = MessageBoxButtons.AbortRetryIgnore;
-                    DialogResult result = MessageBox.Show(exc.ToString(), title, buttons, MessageBoxIcon.Warning);
+                var title = "failed";
+                MessageBoxButtons buttons = MessageBoxButtons.AbortRetryIgnore;
+                DialogResult result = MessageBox.Show(exc.ToString(), title, buttons, MessageBoxIcon.Warning);
                 }
 
             }
             int c = 0;
             foreach (var item in dListCsvData)
             {
-                //String[] failed = File.ReadAllText(@"C:\Users\User-PC\source\repos\csvtester\csvtester\bin\Debug\csvtest.csv").Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+                
 
                 var failed = richTextBox1.Lines;
                 var temp = "";
-                //var temp2 = "";
+                
                 newdata = new string[failed.Length];
                 for (int i = 0; i < failed.Length; i++)
                 {//add if statment with .contains skus
@@ -119,38 +117,41 @@ namespace csvtester
                     temp = failed[i].Replace(
                         "SKU ",
                         "");
-                    
-                    if (temp.Contains(',') )
+
+                    if (temp.Contains(','))
                     {
-                       var temp2 =  temp.Split(',');
+                        var temp2 = temp.Split(',');
                         newdata[i] = temp2[0];
-                        
+
+                    }
+                    else if (temp.Contains('\t'))
+                    {
+                        var temp2 = temp.Split('\t');
+                        newdata[i] = temp2[0];
                     }
                     else if (temp.Contains(' '))
                     {
+                        
                         var temp2 = temp.Split(' ');
                         newdata[i] = temp2[0];
-                    }
+                    }  
                     else
                     {
                         newdata[i] = temp;
                     }
                 }
-                //richTextBox2.Show();
-                //richTextBox2.Lines = newdata;
-                for (int i = 0; i < newdata.Count(); i++)
+                IEnumerable<string> uniqueItems = newdata.Distinct<string>();
+                foreach(var newdItem in uniqueItems)
                 {
-                    //Console.WriteLine(newfailed[i]);
-                    if (item.Key == newdata[i])
+
+                    if (item.Key == newdItem)
                     {
                         csvcontent.AppendLine(item.ToString().Trim(']', '['));
-                        //csvcontent.Append(new[] { Environment.NewLine });
-                        //Console.WriteLine(item);
                         c++;
-
+                        //newdata[i] = null;
                     }
                 }
-               
+
             }
             try
             {
@@ -184,7 +185,7 @@ namespace csvtester
                 string title = "Unauthorized Access To File Path";
                 MessageBoxButtons buttons = MessageBoxButtons.AbortRetryIgnore;
                 DialogResult result = MessageBox.Show(message, title, buttons, MessageBoxIcon.Warning);
-                
+
             }
             catch (ArgumentException)
             {
@@ -192,9 +193,9 @@ namespace csvtester
                 string title = "Path was not specified";
                 MessageBoxButtons buttons = MessageBoxButtons.OKCancel;
                 DialogResult result = MessageBox.Show(message, title, buttons, MessageBoxIcon.Warning);
-                
+
             }
-            
+
         }
     }
 }
